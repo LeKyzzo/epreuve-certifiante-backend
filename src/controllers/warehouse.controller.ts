@@ -1,16 +1,41 @@
 import { type Request, type Response } from 'express';
 
 import type { DocumentEmplacement } from '../models/emplacement';
-import WarehouseService from '../services/warehouse.service';
+import type { EntrepotChamps } from '../models/entrepot';
+import EntrepotService from '../services/warehouse.service';
+import WarehousePlanService from '../services/warehouse-plan.service';
 
 export default class WarehouseController {
-  constructor(private readonly service = new WarehouseService()) {}
+  constructor(
+    private readonly entrepotService = new EntrepotService(),
+    private readonly planService = new WarehousePlanService()
+  ) {}
+
+  listerEntrepots = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const entrepots = await this.entrepotService.listerEntrepots();
+      res.json(entrepots);
+    } catch (_erreur) {
+      res.status(500).json({ message: "Lecture des entrepôts impossible." });
+    }
+  };
+
+  creerEntrepot = async (req: Request, res: Response): Promise<void> => {
+    const { name, location } = req.body as EntrepotChamps;
+
+    try {
+      const entrepot = await this.entrepotService.creerEntrepot({ name, location });
+      res.status(201).json(entrepot);
+    } catch (_erreur) {
+      res.status(500).json({ message: "Création de l'entrepôt impossible." });
+    }
+  };
 
   recupererPlan = async (req: Request, res: Response): Promise<void> => {
     const idEntrepot = Number(req.params.id);
 
     try {
-      const document = await this.service.recupererPlan(idEntrepot);
+      const document = await this.planService.recupererPlan(idEntrepot);
 
       if (!document) {
         res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
@@ -25,12 +50,11 @@ export default class WarehouseController {
 
   creerPlan = async (req: Request, res: Response): Promise<void> => {
     const idEntrepot = Number(req.params.id);
-    const { code, layout = [], metadata } = req.body as Partial<DocumentEmplacement>;
-
-    if (!code) {
-      res.status(400).json({ message: 'Le champ code est obligatoire.' });
-      return;
-    }
+    const { code, layout = [], metadata } = req.body as {
+      code: string;
+      layout?: DocumentEmplacement['layout'];
+      metadata?: DocumentEmplacement['metadata'];
+    };
 
     try {
       const document: DocumentEmplacement = {
@@ -44,7 +68,7 @@ export default class WarehouseController {
         delete document.metadata;
       }
 
-      const planCree = await this.service.creerPlan(idEntrepot, document);
+      const planCree = await this.planService.creerPlan(document);
       res.status(201).json(planCree);
     } catch (erreur: any) {
       if (erreur?.code === 11000) {
@@ -77,7 +101,7 @@ export default class WarehouseController {
     }
 
     try {
-      const documentMisAJour = await this.service.mettreAJourPlan(idEntrepot, miseAJour);
+      const documentMisAJour = await this.planService.mettreAJourPlan(idEntrepot, miseAJour);
 
       if (!documentMisAJour) {
         res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
