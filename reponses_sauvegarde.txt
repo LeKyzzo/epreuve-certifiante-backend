@@ -1,0 +1,9 @@
+1) Différence entre les deux:
+- Sauvegarde complète : copie toute la db
+- Sauvegarde incrémentielle : ne sauvegarde que les changements depuis la dernière sauvegarde réalisée
+
+2) Pour un entrepot actif quotidiennement, je recommanderai une sauvegarde complète tous les jours et une sauvegarde incrémentielle toutes les 1-2 heures
+
+3️) pg_dump ou pg_basebackup permettent de sauvegarder une db pgadmin.
+
+4️) Les sauvegardes régulières et testées, stockage externe ou les procédures de restauration documentées sont des bonnes pratiques permettant d’assurer une récupération rapide 
