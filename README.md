@@ -1,7 +1,7 @@
 # StockLink Core 
 
 ## Résumé
-API Node.js / TypeScript pour gérer les entrepôts StockLink. Les produits et mouvements sont stockés dans PostgreSQL (pilote `pg`) tandis que la cartographie interne est conservée dans MongoDB (pilote `mongodb`)
+API Node.js / TypeScript pour gérer les entrepôts StockLink, les produits et mouvements sont stockés dans PostgreSQL, tandis que les localisations sont conservées dans MongoDB.
 
 ## Prérequis
 - Node.js 20+
@@ -14,27 +14,28 @@ API Node.js / TypeScript pour gérer les entrepôts StockLink. Les produits et m
 npm install
 cp .env.example .env
 ```
-Adaptez ensuite le fichier `.env` avec vos paramètres locaux, cluster mongodb, db pgadmin
+Adaptez ensuite le fichier `.env` avec votre cluster mongodb et votre db pgadmin
 
 ## Scripts npm
 - `npm run dev` : lance l’API en TypeScript avec rechargement (`ts-node-dev`).
 - `npm run build` : compile vers `dist/`.
 - `npm run start` : exécute la version compilée.
+- `npm run test` : Script de test à faire si j'ai le temps mdr.
 
 ## Structure du projet
 ```
 src/
-  app.ts                # Configuration Express et routage
-  server.ts             # Démarrage serveur + vérification des connexions
+  app.ts                # Configuration Express et routes
+  server.ts             # Démarrage serveur
   config/
     env.ts              # Lecture des variables d’environnement
     mongoClient.ts      # Client MongoDB partagé
     postgresClient.ts   # Pool PostgreSQL partagé
-  controllers/          # Logique des endpoints REST
-  routes/               # Routes Express par ressource
+  controllers/          # Logique des endpoints
+  routes/               # Routes Express
   types/
     location.ts         # Interfaces TypeScript pour la structure Mongo
-reponses_sauvegarde.txt # Réponses théoriques à compléter
+reponses_sauvegarde.txt # Réponses théoriques des questions 
 ```
 
 ## Bases de données
@@ -47,9 +48,9 @@ reponses_sauvegarde.txt # Réponses théoriques à compléter
 3. Renseignez les variables `POSTGRES_*` dans `.env`.
 
 ### MongoDB
-1. Démarrez un serveur MongoDB (par défaut `mongodb://localhost:27017/stocklink`).
-2. Ajustez `MONGO_URI` dans `.env` au besoin.
-3. La collection `locations` est créée automatiquement et indexée sur `warehouseId` lors de la première insertion.
+1. Démarrez un serveur MongoDB 
+2. Ajustez `MONGO_URI` dans `.env`
+3. La collection `locations` est créée automatiquement et indexée sur `warehouseId`.
 
 ## Routes disponibles
 - `GET /api/products`
@@ -63,5 +64,3 @@ reponses_sauvegarde.txt # Réponses théoriques à compléter
 - `GET /api/movements`
 - `POST /api/movements`
 
-## Notes
-- Le fichier `reponses_sauvegarde.txt` reste à compléter.
