@@ -9,18 +9,21 @@ API Node.js / TypeScript pour gérer les entrepôts StockLink, les produits et m
 - PostgreSQL 14+
 - MongoDB 6+
 
-## Installation
+## Lancement rapide
 ```
 npm install
 cp .env.example .env
+npm run dev
 ```
-Adaptez ensuite le fichier `.env` avec votre cluster mongodb et votre db pgadmin
+Complétez ensuite `.env` avec vos accès PostgreSQL/MongoDB.
 
-## Scripts npm
-- `npm run dev` : lance l’API en TypeScript avec rechargement (`ts-node-dev`).
-- `npm run build` : compile vers `dist/`.
-- `npm run start` : exécute la version compilée.
-- `npm run test` : script de test à faire si j'ai le temps mdr.
+## Clé JWT
+- Variable à renseigner : `JWT_SECRET` (voir `.env.example`).
+- Pour générer une clé forte :
+  ```bash
+  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+  ```
+- Durée par défaut : `JWT_EXPIRES_IN=1h` (modifiable dans `.env`).
 
 ## Structure du projet
 ```
@@ -52,15 +55,22 @@ reponses_sauvegarde.txt # Réponses théoriques des questions
 2. Ajustez `MONGO_URI` dans `.env`
 3. La collection `locations` est créée automatiquement et indexée sur `warehouseId`.
 
-## Routes disponibles
-- `GET /api/products`
-- `POST /api/products`
-- `PUT /api/products/:id`
-- `DELETE /api/products/:id`
-- `GET /api/warehouses/:id/locations`
-- `POST /api/warehouses/:id/locations`
-- `PUT /api/warehouses/:id/locations`
-- `GET /api/locations/:binCode/exists`
-- `GET /api/movements`
-- `POST /api/movements`
+## Routes & protection
+- `GET /api/products` : public
+- `POST /api/products` : authentifié
+- `PUT /api/products/:id` : authentifié
+- `DELETE /api/products/:id` : admin uniquement
+- `POST /api/movements` : authentifié
+- `GET /api/movements` : public
+- `GET /api/warehouses` : authentifié
+- `POST /api/warehouses` : admin uniquement
+- `GET /api/warehouses/:id/locations` : authentifié
+- `POST /api/warehouses/:id/locations` : admin uniquement
+- `PUT /api/warehouses/:id/locations` : admin uniquement
+
+## Tests
+- `npm test`
+
+## Swagger
+- Interface disponible sur `http://localhost:3000/docs`
 
