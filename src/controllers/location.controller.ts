@@ -1,6 +1,23 @@
 import { type Request, type Response } from 'express';
 
-import { obtenirCollectionEmplacements } from '../bdd';
+import { type Collection } from 'mongodb';
+
+import mongoClient from '../config/mongoClient';
+import type { DocumentEmplacement } from '../models/emplacement';
+
+let collectionEmplacements: Collection<DocumentEmplacement> | null = null;
+
+const obtenirCollectionEmplacements = async (): Promise<Collection<DocumentEmplacement>> => {
+  if (!collectionEmplacements) {
+    await mongoClient.connect();
+    collectionEmplacements = mongoClient
+      .db()
+      .collection<DocumentEmplacement>('locations');
+    await collectionEmplacements.createIndex({ warehouseId: 1 }, { unique: true });
+  }
+
+  return collectionEmplacements;
+};
 
 export const verifierBac = async (req: Request, res: Response): Promise<void> => {
   const { binCode } = req.params;

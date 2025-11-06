@@ -20,16 +20,16 @@ Adaptez ensuite le fichier `.env` avec vos paramètres locaux, cluster mongodb, 
 - `npm run dev` : lance l’API en TypeScript avec rechargement (`ts-node-dev`).
 - `npm run build` : compile vers `dist/`.
 - `npm run start` : exécute la version compilée.
-- `npm run test` : A faire
 
 ## Structure du projet
 ```
 src/
   app.ts                # Configuration Express et routage
-  server.ts             # Démarrage serveur + connexions BDD
-  bdd.ts                # Connexions PostgreSQL / MongoDB partagées
+  server.ts             # Démarrage serveur + vérification des connexions
   config/
     env.ts              # Lecture des variables d’environnement
+    mongoClient.ts      # Client MongoDB partagé
+    postgresClient.ts   # Pool PostgreSQL partagé
   controllers/          # Logique des endpoints REST
   routes/               # Routes Express par ressource
   types/
@@ -64,4 +64,4 @@ reponses_sauvegarde.txt # Réponses théoriques à compléter
 - `POST /api/movements`
 
 ## Notes
-- A faire
+- Le fichier `reponses_sauvegarde.txt` reste à compléter.

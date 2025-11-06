@@ -1,9 +1,7 @@
 import { type Request, type Response } from 'express';
 
-import { obtenirPool } from '../bdd';
+import pool from '../config/postgresClient';
 import type { Produit, ProduitCreation, ProduitMiseAJour } from '../models/produit';
-
-const pool = obtenirPool();
 
 const mapProduit = (ligne: any): Produit => ({
   id: ligne.id,
