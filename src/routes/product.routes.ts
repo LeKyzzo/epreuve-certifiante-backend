@@ -1,6 +1,13 @@
 import { Router } from 'express';
 
 import ProductController from '../controllers/product.controller';
+import { authentifier, verifierAdmin } from '../middlewares/auth.middleware';
+import { valider } from '../middlewares/validation.middleware';
+import {
+	schemaCreationProduit,
+	schemaMiseAJourProduit,
+	schemaSuppressionProduit
+} from '../validators/product.validators';
 
 const router = Router();
 const controller = new ProductController();
@@ -8,11 +15,11 @@ const controller = new ProductController();
 router
 	.route('/')
 	.get(controller.lister)
-	.post(controller.creer);
+	.post(authentifier, valider(schemaCreationProduit), controller.creer);
 
 router
 	.route('/:id')
-	.put(controller.mettreAJour)
-	.delete(controller.supprimer);
+	.put(authentifier, valider(schemaMiseAJourProduit), controller.mettreAJour)
+	.delete(authentifier, verifierAdmin, valider(schemaSuppressionProduit), controller.supprimer);
 
 export default router;

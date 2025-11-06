@@ -19,6 +19,10 @@ const env = {
   },
   mongo: {
     uri: process.env.MONGO_URI ?? 'mongodb://localhost:27017/stocklink'
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET ?? 'changeme-en-dev',
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '1h'
   }
 };
 
