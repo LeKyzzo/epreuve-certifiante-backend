@@ -1,10 +1,13 @@
 import app from './app';
 import env from './config/env';
-import { testerConnexionMongo, testerConnexionPostgres } from './bdd';
+import mongoClient from './config/mongoClient';
+import pool from './config/postgresClient';
 
 const demarrerServeur = async (): Promise<void> => {
   try {
-    await Promise.all([testerConnexionPostgres(), testerConnexionMongo()]);
+    await pool.query('SELECT 1');
+    await mongoClient.connect();
+    await mongoClient.db().command({ ping: 1 });
 
     app.listen(env.port, () => {
       console.log(`StockLink Core API démarrée sur le port ${env.port}`);
