@@ -18,9 +18,9 @@ npm run dev
 Complétez ensuite `.env` avec vos accès PostgreSQL/MongoDB.
 
 ## Clé JWT
-- Variable à renseigner : `JWT_SECRET` (voir `.env.example`).
+- `JWT_SECRET` : test 
 - Pour générer une clé forte :
-  ```bash
+  ```
   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
   ```
 - Durée par défaut : `JWT_EXPIRES_IN=1h` (modifiable dans `.env`).
