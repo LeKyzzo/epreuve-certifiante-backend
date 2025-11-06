@@ -3,10 +3,21 @@
 -- ============================================
 
 --  Création de la base de données
-CREATE DATABASE stocklink;
+-- CREATE DATABASE stocklink;
 
 -- ============================================
--- TABLE 1 : WAREHOUSES (entrepôts physiques)
+-- TABLE 1 : USERS (comptes applicatifs)
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'utilisateur' CHECK (role IN ('utilisateur', 'admin')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================
+-- TABLE 2 : WAREHOUSES (entrepôts physiques)
 -- ============================================
 
 CREATE TABLE warehouses (
@@ -16,7 +27,7 @@ CREATE TABLE warehouses (
 );
 
 -- ============================================
--- TABLE 2 : PRODUCTS (articles stockés)
+-- TABLE 3 : PRODUCTS (articles stockés)
 -- ============================================
 
 CREATE TABLE products (
@@ -32,7 +43,7 @@ CREATE TABLE products (
 );
 
 -- ============================================
--- TABLE 3 : MOVEMENTS (historique des stocks)
+-- TABLE 4 : MOVEMENTS (historique des stocks)
 -- ============================================
 
 CREATE TABLE movements (
