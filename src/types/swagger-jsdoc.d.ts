@@ -1,0 +1,8 @@
+declare module 'swagger-jsdoc' {
+  interface SwaggerJSDocOptions {
+    definition: Record<string, unknown>;
+    apis: string[];
+  }
+
+  export default function swaggerJsdoc(options: SwaggerJSDocOptions): Record<string, unknown>;
+}
