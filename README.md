@@ -10,7 +10,7 @@ API Node.js / TypeScript pour gérer les entrepôts StockLink, les produits et m
 - MongoDB 6+
 
 ## Installation
-```bash
+```
 npm install
 cp .env.example .env
 ```

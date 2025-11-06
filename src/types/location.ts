@@ -13,6 +13,8 @@ export interface AlleEntrepot {
   racks: RackEntrepot[];
 }
 
+import type { ObjectId } from 'mongodb';
+
 export interface DocumentEmplacement {
   warehouseId: number;
   code: string;
@@ -20,4 +22,5 @@ export interface DocumentEmplacement {
   metadata?: Record<string, unknown>;
   createdAt?: Date;
   updatedAt?: Date;
+  _id?: ObjectId;
 }

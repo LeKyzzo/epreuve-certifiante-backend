@@ -1,12 +1,13 @@
 import { Router } from 'express';
 
-import { enregistrerMouvement, listerMouvements } from '../controllers/movement.controller';
+import MovementController from '../controllers/movement.controller';
 
 const router = Router();
+const controller = new MovementController();
 
 router
-	.route('/')
-	.get(listerMouvements)
-	.post(enregistrerMouvement);
+  .route('/')
+  .get(controller.lister)
+  .post(controller.creer);
 
 export default router;

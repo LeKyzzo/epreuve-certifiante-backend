@@ -1,9 +1,10 @@
 import { Router } from 'express';
 
-import { verifierBac } from '../controllers/location.controller';
+import LocationController from '../controllers/location.controller';
 
 const router = Router();
+const controller = new LocationController();
 
-router.get('/:binCode/exists', verifierBac);
+router.get('/:binCode/exists', controller.verifier);
 
 export default router;

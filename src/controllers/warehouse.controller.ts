@@ -1,108 +1,92 @@
 import { type Request, type Response } from 'express';
 
-import { type Collection } from 'mongodb';
-
-import mongoClient from '../config/mongoClient';
 import type { DocumentEmplacement } from '../models/emplacement';
+import WarehouseService from '../services/warehouse.service';
 
-let collectionEmplacements: Collection<DocumentEmplacement> | null = null;
+export default class WarehouseController {
+  constructor(private readonly service = new WarehouseService()) {}
 
-const obtenirCollectionEmplacements = async (): Promise<Collection<DocumentEmplacement>> => {
-  if (!collectionEmplacements) {
-    await mongoClient.connect();
-    collectionEmplacements = mongoClient
-      .db()
-      .collection<DocumentEmplacement>('locations');
-    await collectionEmplacements.createIndex({ warehouseId: 1 }, { unique: true });
-  }
+  recupererPlan = async (req: Request, res: Response): Promise<void> => {
+    const idEntrepot = Number(req.params.id);
 
-  return collectionEmplacements;
-};
+    try {
+      const document = await this.service.recupererPlan(idEntrepot);
 
-export const recupererPlanEntrepot = async (req: Request, res: Response): Promise<void> => {
-  const idEntrepot = Number(req.params.id);
+      if (!document) {
+        res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
+        return;
+      }
 
-  try {
-    const collection = await obtenirCollectionEmplacements();
-    const document = await collection.findOne({ warehouseId: idEntrepot });
+      res.json(document);
+    } catch (_erreur) {
+      res.status(500).json({ message: 'Lecture du plan impossible.' });
+    }
+  };
 
-    if (!document) {
-      res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
+  creerPlan = async (req: Request, res: Response): Promise<void> => {
+    const idEntrepot = Number(req.params.id);
+    const { code, layout = [], metadata } = req.body as Partial<DocumentEmplacement>;
+
+    if (!code) {
+      res.status(400).json({ message: 'Le champ code est obligatoire.' });
       return;
     }
 
-    res.json(document);
-  } catch (_erreur) {
-    res.status(500).json({ message: 'Lecture du plan impossible.' });
-  }
-};
+    try {
+      const document: DocumentEmplacement = {
+        warehouseId: idEntrepot,
+        code,
+        layout,
+        metadata
+      };
 
-export const creerPlanEntrepot = async (req: Request, res: Response): Promise<void> => {
-  const idEntrepot = Number(req.params.id);
-  const { code, layout = [], metadata } = req.body as Partial<DocumentEmplacement>;
+      if (metadata === undefined) {
+        delete document.metadata;
+      }
 
-  if (!code) {
-    res.status(400).json({ message: 'Le champ code est obligatoire.' });
-    return;
-  }
+      const planCree = await this.service.creerPlan(idEntrepot, document);
+      res.status(201).json(planCree);
+    } catch (erreur: any) {
+      if (erreur?.code === 11000) {
+        res.status(409).json({ message: 'Un plan existe déjà pour cet entrepôt.' });
+        return;
+      }
+      res.status(500).json({ message: 'Création du plan impossible.' });
+    }
+  };
 
-  try {
-    const collection = await obtenirCollectionEmplacements();
-    const document: DocumentEmplacement = {
-      warehouseId: idEntrepot,
-      code,
-      layout,
-      metadata
-    };
+  mettreAJourPlan = async (req: Request, res: Response): Promise<void> => {
+    const idEntrepot = Number(req.params.id);
+    const { code, layout, metadata } = req.body as Partial<DocumentEmplacement>;
 
-    if (metadata === undefined) {
-      delete document.metadata;
+    const miseAJour: Partial<DocumentEmplacement> = {};
+
+    if (code !== undefined) {
+      miseAJour.code = code;
+    }
+    if (layout !== undefined) {
+      miseAJour.layout = layout;
+    }
+    if (metadata !== undefined) {
+      miseAJour.metadata = metadata;
     }
 
-    const insertion = await collection.insertOne(document);
-    res.status(201).json({ ...document, _id: insertion.insertedId });
-  } catch (erreur: any) {
-    if (erreur?.code === 11000) {
-      res.status(409).json({ message: 'Un plan existe déjà pour cet entrepôt.' });
-      return;
-    }
-    res.status(500).json({ message: 'Création du plan impossible.' });
-  }
-};
-
-export const mettreAJourPlanEntrepot = async (req: Request, res: Response): Promise<void> => {
-  const idEntrepot = Number(req.params.id);
-  const { code, layout, metadata } = req.body as Partial<DocumentEmplacement>;
-
-  const miseAJour: Partial<DocumentEmplacement> = {};
-
-  if (code !== undefined) {
-    miseAJour.code = code;
-  }
-  if (layout !== undefined) {
-    miseAJour.layout = layout;
-  }
-  if (metadata !== undefined) {
-    miseAJour.metadata = metadata;
-  }
-
-  if (Object.keys(miseAJour).length === 0) {
-    res.status(400).json({ message: 'Aucun champ à mettre à jour.' });
-    return;
-  }
-
-  try {
-    const collection = await obtenirCollectionEmplacements();
-    const resultat = await collection.updateOne({ warehouseId: idEntrepot }, { $set: miseAJour });
-
-    if (resultat.matchedCount === 0) {
-      res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
+    if (Object.keys(miseAJour).length === 0) {
+      res.status(400).json({ message: 'Aucun champ à mettre à jour.' });
       return;
     }
 
-    const documentMisAJour = await collection.findOne({ warehouseId: idEntrepot });
-    res.json(documentMisAJour);
-  } catch (_erreur) {
-    res.status(500).json({ message: 'Mise à jour du plan impossible.' });
-  }
-};
+    try {
+      const documentMisAJour = await this.service.mettreAJourPlan(idEntrepot, miseAJour);
+
+      if (!documentMisAJour) {
+        res.status(404).json({ message: 'Aucune carte pour cet entrepôt.' });
+        return;
+      }
+
+      res.json(documentMisAJour);
+    } catch (_erreur) {
+      res.status(500).json({ message: 'Mise à jour du plan impossible.' });
+    }
+  };
+}
