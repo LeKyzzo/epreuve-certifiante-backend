@@ -1,40 +1,23 @@
-import { type Collection } from 'mongodb';
+import pool from '../config/postgresClient';
+import type { Entrepot, EntrepotChamps } from '../models/entrepot';
 
-import mongoClient from '../config/mongoClient';
-import type { DocumentEmplacement } from '../models/emplacement';
+const mapEntrepot = (ligne: any): Entrepot => ({
+  id: ligne.id,
+  name: ligne.name,
+  location: ligne.location
+});
 
-export default class WarehouseService {
-  private collection: Collection<DocumentEmplacement> | null = null;
-
-  private async obtenirCollection(): Promise<Collection<DocumentEmplacement>> {
-    if (!this.collection) {
-      await mongoClient.connect();
-      this.collection = mongoClient.db().collection<DocumentEmplacement>('locations');
-      await this.collection.createIndex({ warehouseId: 1 }, { unique: true });
-    }
-
-    return this.collection;
+export default class EntrepotService {
+  async listerEntrepots(): Promise<Entrepot[]> {
+    const resultat = await pool.query('SELECT id, name, location FROM warehouses ORDER BY id');
+    return resultat.rows.map(mapEntrepot);
   }
 
-  async recupererPlan(warehouseId: number): Promise<DocumentEmplacement | null> {
-    const collection = await this.obtenirCollection();
-    return collection.findOne({ warehouseId });
-  }
-
-  async creerPlan(warehouseId: number, document: DocumentEmplacement): Promise<DocumentEmplacement> {
-    const collection = await this.obtenirCollection();
-    const insertion = await collection.insertOne({ ...document, warehouseId });
-    return { ...document, warehouseId, _id: insertion.insertedId } as DocumentEmplacement;
-  }
-
-  async mettreAJourPlan(warehouseId: number, miseAJour: Partial<DocumentEmplacement>): Promise<DocumentEmplacement | null> {
-    const collection = await this.obtenirCollection();
-    const resultat = await collection.updateOne({ warehouseId }, { $set: miseAJour });
-
-    if (resultat.matchedCount === 0) {
-      return null;
-    }
-
-    return collection.findOne({ warehouseId });
+  async creerEntrepot(champs: EntrepotChamps): Promise<Entrepot> {
+    const resultat = await pool.query(
+      'INSERT INTO warehouses (name, location) VALUES ($1, $2) RETURNING id, name, location',
+      [champs.name, champs.location]
+    );
+    return mapEntrepot(resultat.rows[0]);
   }
 }
