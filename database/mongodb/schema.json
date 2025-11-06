@@ -1,0 +1,47 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "required": ["warehouseId", "code", "layout"],
+    "properties": {
+      "warehouseId": { "bsonType": "int" },
+      "code": { "bsonType": "string" },
+      "layout": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "required": ["aisle", "racks"],
+          "properties": {
+            "aisle": { "bsonType": "string" },
+            "racks": {
+              "bsonType": "array",
+              "items": {
+                "bsonType": "object",
+                "required": ["rack", "levels"],
+                "properties": {
+                  "rack": { "bsonType": "string" },
+                  "levels": {
+                    "bsonType": "array",
+                    "items": {
+                      "bsonType": "object",
+                      "required": ["level", "bins"],
+                      "properties": {
+                        "level": { "bsonType": "int" },
+                        "bins": {
+                          "bsonType": "array",
+                          "items": { "bsonType": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "metadata": { "bsonType": ["object", "null"] },
+      "createdAt": { "bsonType": ["date", "null"] },
+      "updatedAt": { "bsonType": ["date", "null"] }
+    }
+  }
+}
