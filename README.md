@@ -1,4 +1,4 @@
-# StockLink Core 
+# StockLink Pro 
 
 ## Résumé
 API Node.js / TypeScript pour gérer les entrepôts StockLink, les produits et mouvements sont stockés dans PostgreSQL, tandis que les localisations sont conservées dans MongoDB.
@@ -20,7 +20,7 @@ Adaptez ensuite le fichier `.env` avec votre cluster mongodb et votre db pgadmin
 - `npm run dev` : lance l’API en TypeScript avec rechargement (`ts-node-dev`).
 - `npm run build` : compile vers `dist/`.
 - `npm run start` : exécute la version compilée.
-- `npm run test` : Script de test à faire si j'ai le temps mdr.
+- `npm run test` : script de test à faire si j'ai le temps mdr.
 
 ## Structure du projet
 ```
