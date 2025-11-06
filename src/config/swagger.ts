@@ -189,7 +189,6 @@ const swaggerDefinition = {
       get: {
         tags: ['Produits'],
         summary: 'Lister les produits',
-        security: [{ bearerAuth: [] }],
         responses: {
           200: {
             description: 'Liste des produits',
@@ -240,7 +239,6 @@ const swaggerDefinition = {
       get: {
         tags: ['Entrepôts'],
         summary: 'Lister les entrepôts',
-        security: [{ bearerAuth: [] }],
         responses: {
           200: {
             description: 'Liste des entrepôts',
@@ -275,7 +273,6 @@ const swaggerDefinition = {
       get: {
         tags: ['Entrepôts'],
         summary: 'Récupérer le plan de localisation',
-        security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
         responses: {
           200: {
@@ -325,7 +322,6 @@ const swaggerDefinition = {
       get: {
         tags: ['Mouvements'],
         summary: 'Lister les mouvements',
-        security: [{ bearerAuth: [] }],
         responses: {
           200: {
             description: 'Liste des mouvements',
@@ -360,7 +356,6 @@ const swaggerDefinition = {
       get: {
         tags: ['Localisations'],
         summary: 'Vérifier la disponibilité dune localisation',
-        security: [{ bearerAuth: [] }],
         parameters: [{ name: 'binCode', in: 'path', required: true, schema: { type: 'string' } }],
         responses: {
           200: {

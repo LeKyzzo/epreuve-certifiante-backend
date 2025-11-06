@@ -1,5 +1,7 @@
-import cors from 'cors';
+import cors, { type CorsOptions } from 'cors';
 import express, { type Request, type Response } from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 
 import routes from './routes';
@@ -7,7 +9,21 @@ import swaggerSpec from './config/swagger';
 
 const app = express();
 
-app.use(cors());
+const corsOptions: CorsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true
+};
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(limiter);
 app.use(express.json());
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

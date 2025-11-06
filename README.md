@@ -62,11 +62,11 @@ reponses_sauvegarde.txt # Réponses théoriques des questions
 - `DELETE /api/products/:id` : admin uniquement
 - `POST /api/movements` : authentifié
 - `GET /api/movements` : public
-- `GET /api/warehouses` : authentifié
-- `POST /api/warehouses` : admin uniquement
-- `GET /api/warehouses/:id/locations` : authentifié
-- `POST /api/warehouses/:id/locations` : admin uniquement
-- `PUT /api/warehouses/:id/locations` : admin uniquement
+- `GET /api/warehouses` : public
+- `POST /api/warehouses` : authentifié
+- `GET /api/warehouses/:id/locations` : public
+- `POST /api/warehouses/:id/locations` : authentifié
+- `PUT /api/warehouses/:id/locations` : authentifié
 
 ## Tests
 - `npm test`
